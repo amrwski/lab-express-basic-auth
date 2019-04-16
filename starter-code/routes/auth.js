@@ -84,21 +84,22 @@ router.post("/signup", (req, res, next) => {
     return
   }
   //use user schema to create a user and ensure user is new
-  User.findOne({ username }).then(user => {
-    if (user) {
-      res.render("auth/signup", {
-        errorMessage: "There is already a user with this username"
-      })
-    }
-    return
-  })
-  User.create({ username, password: hashPassword })
-    .then(() => {
-      res.redirect("/secret")
-    })
-    .catch(err => {
-      console.error(err)
-      next()
+  User.findOne({ username })
+    .then(user => {
+      if (user) {
+        res.render("auth/signup", {
+          errorMessage: "There is already a user with this username"
+        })
+        return
+      }
+      User.create({ username, password: hashPassword })
+        .then(() => {
+          res.redirect("/secret")
+        })
+        .catch(err => {
+          console.error(err)
+          next()
+        })
     })
     .catch(err => {
       console.error(`Can't find user`, err)
